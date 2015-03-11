@@ -16,11 +16,6 @@ Your algorithm should run in O(n) complexity.
 
 #include <stdio.h>
 
-void dump(int vec[]) {
-	for(int i = 0; i < 22; i++) printf("[%d]", vec[i]);
-	printf("\n");
-}
-
 int longestConsecutive(int num[], int n) {
 	unsigned char vec[500] = {0}, nvec[500] = {0};
 	int bigger_len = 1;
