@@ -12,23 +12,21 @@ Your algorithm should run in O(n) time and uses constant space.
 
 #include <stdio.h>
 
-class Solution {
-public:
-	int firstMissingPositive(int A[], int n) {
-		bool res[n];
-		int i;
-		for(i = 0; i < n; i++) {
-			if(A[i] > 0) res[ A[i] - 1 ] = true;
-		}
-		for(i = 0; i < n; i++) {
-			if(!res[i]) return ++i;
-		}
-		return ++i;
+int firstMissingPositive(int* A, int n) {
+	char res[n];
+	for(int j = 0; j < n; j++) res[j]=0;
+	int i;
+	if(n < 1) return 1;
+	for(i = 0; i < n; i++) {
+		if(A[i] > 0 && A[i] <= n) res[ A[i] - 1 ] = 1;
 	}
-};
+	for(i = 0; i < n; i++) {
+		if(!res[i]) return ++i;
+	}
+	return ++i;
+}
 
 int main() {
-	Solution *s = new Solution();
-	int arr[] = {5,4,2,7,6,1,3};
-	printf("-> %d\n", s->firstMissingPositive(arr, 7));
+	int arr[] = {1, 2, 3, 4, 5};
+	printf("-> %d\n", firstMissingPositive(arr, 5));
 }
