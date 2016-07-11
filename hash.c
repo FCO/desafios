@@ -170,6 +170,113 @@ Pair *get(Hash *hash, const char *key) {
 	return node->pair;
 }
 
+typedef struct _stack {
+	Node		*val;
+	struct _stack	*next;
+} Stack;
+
+void push(Stack **stack, Node *new) {
+	Stack *next	= (*stack)->next;
+	*stack		= malloc(sizeof(Node));
+	(*stack)->next	= next;
+}
+
+Node *pop(Stack **stack) {
+	Stack *last	= *stack;
+	Node *last_val	= last->val;
+	*stack		= (*stack)->next;
+	free(last);
+	return last_val;
+}
+
+typedef struct _tree_iterator {
+	Stack	*stack;
+	Node	*current;
+} TreeIterator;
+
+TreeIterator *new_tree_iterator(Node *node) {
+	if(!node) return NULL;
+	TreeIterator *new	= malloc(sizeof(TreeIterator));
+	new->stack		= NULL;
+	new->current		= node;
+	return new;
+}
+
+Node *tree_next(TreeIterator *iterator) {
+	printf("2.9.1");
+	if(!iterator) return NULL;
+	printf("2.9.2");
+	while(iterator->current != NULL) {
+	printf("2.9.3");
+		push(&(iterator->stack), iterator->current);
+	printf("2.9.4");
+		iterator->current = iterator->current->left;
+	printf("2.9.5");
+	}
+	printf("2.9.6");
+	Node *node = pop(&(iterator->stack));
+	printf("2.9.7");
+	iterator->current = node->right;
+	printf("2.9.8");
+	return node;
+}
+
+int tree_has_next(TreeIterator *iterator) {
+	return iterator != NULL && (iterator->stack != NULL || iterator->current != NULL);
+}
+
+typedef struct _hash_iterator {
+	Hash		*hash;
+	int		shard;
+	TreeIterator	*tree_iterator;
+} HashIterator;
+
+HashIterator *new_hash_iterator(Hash *hash) {
+	HashIterator *new	= malloc(sizeof(HashIterator));
+	new->hash		= hash;
+	new->shard = 0;
+	new->tree_iterator = new_tree_iterator(*(hash->nodes));
+	return new;
+}
+
+Pair *hash_next(HashIterator *iterator) {
+	printf("2.1\n");
+	if(iterator == NULL) return NULL;
+	printf("2.2\n");
+	if(iterator->tree_iterator == NULL || !tree_has_next(iterator->tree_iterator)) {
+	printf("2.3\n");
+		if(iterator->tree_iterator)
+	printf("2.4\n");
+			free(iterator->tree_iterator);
+	printf("2.5\n");
+		while(*(iterator->hash->nodes + ++(iterator->shard)) == NULL && iterator->shard < iterator->hash->size);
+	printf("2.6\n");
+		if(iterator->shard >= iterator->hash->size)
+			return NULL;
+	printf("2.7\n");
+		iterator->tree_iterator = new_tree_iterator(*(iterator->hash->nodes + iterator->shard));
+	printf("2.8\n");
+	}
+	printf("2.9\n");
+	Node *node = tree_next(iterator->tree_iterator);
+	printf("2.10\n");
+	dump_node(node);
+	printf("2.11\n");
+	return node->pair;
+}
+
+int hash_has_next(HashIterator *iterator) {
+	if(!iterator) return 0;
+	if(!tree_has_next(iterator->tree_iterator)) {
+		free(iterator->tree_iterator);
+		while(*(iterator->hash->nodes + ++(iterator->shard)) == NULL && iterator->shard < iterator->hash->size);
+		if(iterator->shard >= iterator->hash->size)
+			return 0;
+		iterator->tree_iterator = new_tree_iterator(*(iterator->hash->nodes + iterator->shard));
+	}
+	return tree_has_next(iterator->tree_iterator);
+}
+
 int main() {
 	Hash *hash = new_hash_default_hash_func(50);
 	int val1 = 42;
@@ -185,5 +292,14 @@ int main() {
 	printf("hash{%s} == %d\n", "bla", *((int *)get(hash, "bla")->value));
 	printf("hash{%s} == %d\n", "ble", *((int *)get(hash, "ble")->value));
 	printf("hash{%s} == %d\n", "bli", *((int *)get(hash, "bli")->value));
-	printf("the end");
+	HashIterator *it = new_hash_iterator(hash);
+	printf("1\n");
+	while(hash_has_next(it)) {
+	printf("2\n");
+		Pair *pair = hash_next(it);
+	printf("3\n");
+		printf("%s: %d\n", pair->key, *((int *)pair->value));
+	printf("4\n");
+	}
+	printf("the end\n");
 }
