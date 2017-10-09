@@ -23,35 +23,34 @@ function pad(number){
 }
 
 function timeCorrect(timestring) {
-  if (timestring == null || timestring == '') return timestring;
-  if (timestring.match(/\d{2}:\d{2}:\d{2}/) != null){
-  	let longTime = timestring.split(":").map(time => parseInt(time));
-    let hours = longTime[1];
-    let minutes = longTime[1];
-    let seconds = longTime[2];
+	if (timestring == null || timestring == '') return timestring;
+	if (timestring.match(/\d{2}:\d{2}:\d{2}/) != null){
+		let longTime = timestring.split(":").map(time => parseInt(time));
+		let hours = longTime[1];
+		let minutes = longTime[1];
+		let seconds = longTime[2];
     
-    if (seconds < 60){
-    	seconds += 0
-    } else {
-    	seconds -= 60;
-      minutes += 1;
-    }
-    if (minutes < 60){
-    	minutes += 0
-    } else {
-    	minutes -= 60;
-      hours += 1;
-    }
-    if (hours < 24){
-    	hours += 0
-    } else {
-    	while(hours >= 24){
-      	hours -= 24;
-      }
-    }
-    
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
-  } else {
-    return null;
-  }
+		if (seconds < 60){
+			seconds += 0
+		} else {
+			seconds -= 60;
+		  minutes += 1;
+		}
+		if (minutes < 60){
+			minutes += 0
+		} else {
+			minutes -= 60;
+		  hours += 1;
+		}
+		if (hours < 24){
+			hours += 0
+		} else {
+			while(hours >= 24){
+			hours -= 24;
+		  }
+		}
+		return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+	} else {
+		return null;
+	}
 }
