@@ -26,7 +26,7 @@ function timeCorrect(timestring) {
 	if (timestring == null || timestring == '') return timestring;
 	if (timestring.match(/\d{2}:\d{2}:\d{2}/) != null){
 		let longTime = timestring.split(":").map(time => parseInt(time));
-		let hours = longTime[1];
+		let hours = longTime[0];
 		let minutes = longTime[1];
 		let seconds = longTime[2];
     
